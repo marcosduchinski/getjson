@@ -45,7 +45,7 @@ class Dispatcher (val registry: ClassRegistry) {
 
     }
 
-    fun send(path: String): Any {
+    fun execute(path: String): Any {
         val endpoint = registry.getByPath(path);
         if (endpoint != null) {
             return isStrictlyEqualPath(endpoint)

@@ -12,6 +12,7 @@ class SimpleSocketServer {
     private val threadPool = Executors.newCachedThreadPool()
 
     fun start(port: Int = 8080) {
+        //create a server that listens for incoming TCP connections on a specific port
         serverSocket = ServerSocket(port)
         threadPool.submit {
             println("Server running on http://localhost:$port")
@@ -35,9 +36,10 @@ class SimpleSocketServer {
         request.use {
             val reader = BufferedReader(InputStreamReader(request.getInputStream()))
             val writer = BufferedWriter(OutputStreamWriter(request.getOutputStream()))
+            //Ex.: GET /hello HTTP/1.1
             val requestLine = reader.readLine() ?: return
             val path = requestLine.split(" ")[1]
-            val r = Dispatcher(ClassRegistry).send(path)
+            val r = Dispatcher(ClassRegistry).execute(path)
 
             val response = KsonLib(r).asJson()
 
