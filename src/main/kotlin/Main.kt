@@ -1,7 +1,7 @@
 package pt.iscte.mei.pa
 
 import pt.iscte.mei.pa.controller.Controller
-import pt.iscte.mei.pa.http.GetJson
+import pt.iscte.mei.pa.GetJson
 
 
 fun main() {

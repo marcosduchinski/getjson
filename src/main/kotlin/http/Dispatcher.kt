@@ -1,5 +1,6 @@
 package pt.iscte.mei.pa.http
 
+import java.net.URI
 import kotlin.reflect.KFunction
 
 class Dispatcher (val registry: ClassRegistry) {
@@ -10,17 +11,16 @@ class Dispatcher (val registry: ClassRegistry) {
         return function.call(controller) as Any
     }
 
-    private fun hasQueryParameter(path : String): Any {
-        val splitedPath = path.split("?")
-        val paramsMap = splitedPath.last().split("&").associate {
+    private fun hasQueryParameter(path : String, query : String): Any {
+        val queryParams = query.split("&").associate {
             //will fail to a parameter with multiple value like ?n=1&n=2&n=3
             val (key, value) = it.split("=")
             key to value
         }
-        val newPath = splitedPath.first() + "?" + paramsMap.keys.joinToString(separator = "&") { it + "={${it}}" }
+        val newPath = path + "?" + queryParams.keys.joinToString(separator = "&") { it + "={${it}}" }
         val endpoint = registry.getByPath(newPath);
         if (endpoint != null) {
-            val paramsValues = paramsMap.values.map { it.toIntOrNull() ?: it}
+            val paramsValues = queryParams.values.map { it.toIntOrNull() ?: it}
             val controller = endpoint.first
             val function = endpoint.second
             return function.call(controller, *paramsValues.toTypedArray()) as Any
@@ -45,14 +45,17 @@ class Dispatcher (val registry: ClassRegistry) {
 
     }
 
-    fun execute(path: String): Any {
-        val endpoint = registry.getByPath(path);
+    fun execute(uri: URI): Any {
+
+        val endpoint = registry.getByPath(uri.path);
+
         if (endpoint != null) {
             return isStrictlyEqualPath(endpoint)
         }
-        if(path.contains("?")){
-            return hasQueryParameter(path)
+        if(uri.query != null) {
+            return hasQueryParameter(uri.path, uri.query)
         }
-        return hasPathParameter(path)
+
+        return hasPathParameter(uri.path)
     }
 }
