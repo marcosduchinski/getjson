@@ -41,7 +41,10 @@ class GetJson(vararg clazz: KClass<*>) {
 
     class MyHandler : HttpHandler {
         override fun handle(t: HttpExchange) {
+
+            //here ksonlib is used to convert the response to json
             val response = KsonLib(Dispatcher(ClassRegistry).execute(t.requestURI)).asJson()
+
             t.sendResponseHeaders(200, response.length.toLong())
             val os = t.responseBody
             os.write(response.toByteArray())

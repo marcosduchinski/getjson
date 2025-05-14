@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import pt.iscte.mei.pa.controller.Controller
 import pt.iscte.mei.pa.GetJson
+import pt.iscte.mei.pa.controller.Controller
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.URI
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GetJsonTest {
@@ -30,7 +30,9 @@ class GetJsonTest {
 
     @Test
     fun should_return_int_list_as_json() {
-        val connection = URL("$url:$port/api/ints").openConnection() as HttpURLConnection
+        val connection = URI("$url:$port/api/ints")
+            .toURL()
+            .openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
         val responseCode = connection.responseCode
@@ -41,7 +43,9 @@ class GetJsonTest {
 
     @Test
     fun should_return_pair_of_string_as_json() {
-        val connection = URL("$url:$port/api/pair").openConnection() as HttpURLConnection
+        val connection = URI("$url:$port/api/pair")
+            .toURL()
+            .openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
         val responseCode = connection.responseCode
@@ -52,7 +56,9 @@ class GetJsonTest {
 
     @Test
     fun should_return_path_params_a_as_json() {
-        val connection = URL("$url:$port/api/path/a").openConnection() as HttpURLConnection
+        val connection = URI("$url:$port/api/path/a")
+            .toURL()
+            .openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
         val responseCode = connection.responseCode
@@ -63,7 +69,9 @@ class GetJsonTest {
 
     @Test
     fun should_return_path_params_b_as_json() {
-        val connection = URL("$url:$port/api/path/b").openConnection() as HttpURLConnection
+        val connection = URI("$url:$port/api/path/b")
+            .toURL()
+            .openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
         val responseCode = connection.responseCode
@@ -74,7 +82,9 @@ class GetJsonTest {
 
     @Test
     fun should_return_map_as_json() {
-        val connection = URL("$url:$port/api/args?n=3&text=PA").openConnection() as HttpURLConnection
+        val connection = URI("$url:$port/api/args?n=3&text=PA")
+            .toURL()
+            .openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
         val responseCode = connection.responseCode
