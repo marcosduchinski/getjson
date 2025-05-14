@@ -1,0 +1,85 @@
+package http
+
+import KsonLib
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import pt.iscte.mei.pa.controller.Controller
+import pt.iscte.mei.pa.http.GetJson
+import java.net.HttpURLConnection
+import java.net.URL
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class GetJsonTest {
+
+    val port = 8000
+
+    @BeforeAll
+    fun init() {
+        val app = GetJson(Controller::class)
+        app.start(port)
+    }
+
+    @AfterAll
+    fun tearDown() {
+        //app.stop()
+    }
+
+    @Test
+    fun should_return_int_list_as_json() {
+        val connection = URL("http://localhost:$port/api/ints").openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(200, responseCode)
+        assertEquals(KsonLib(listOf(1, 2, 3)).asJson(), responseBody)
+    }
+
+    @Test
+    fun should_return_pair_of_string_as_json() {
+        val connection = URL("http://localhost:$port/api/pair").openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(200, responseCode)
+        assertEquals(KsonLib(mapOf("first" to "um", "second" to "dois")).asJson(), responseBody)
+    }
+
+    @Test
+    fun should_return_path_params_a_as_json() {
+        val connection = URL("http://localhost:$port/api/path/a").openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(200, responseCode)
+        assertEquals(KsonLib("a!").asJson(), responseBody)
+    }
+
+    @Test
+    fun should_return_path_params_b_as_json() {
+        val connection = URL("http://localhost:$port/api/path/b").openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(200, responseCode)
+        assertEquals(KsonLib("b!").asJson(), responseBody)
+    }
+
+    @Test
+    fun should_return_map_as_json() {
+        val connection = URL("http://localhost:$port/api/args?n=3&text=PA").openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(200, responseCode)
+        assertEquals(KsonLib(mapOf("PA" to "PAPAPA")).asJson(), responseBody)
+    }
+
+}
