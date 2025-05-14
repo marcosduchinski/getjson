@@ -11,12 +11,12 @@ import java.net.InetSocketAddress
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
-class GetJson(vararg clazz: KClass<*>) {
+class GetJson(vararg clazzs: KClass<*>) {
 
     val contexts = mutableSetOf<String>()
 
     init {
-        for (clazz in clazz) {
+        for (clazz in clazzs) {
             ClassRegistry.register(clazz)
             extractContext(clazz)
         }
@@ -34,9 +34,10 @@ class GetJson(vararg clazz: KClass<*>) {
     fun start(port: Int = 8080) {
         //https://gist.github.com/trevorwhitney/23f7d8ee9e2f92d629e149a7fde01f21
         val server = HttpServer.create(InetSocketAddress(port), 0)
-        contexts.forEach { server.createContext("/"+it, MyHandler()) }
+        contexts.forEach { server.createContext("/" + it, MyHandler()) }
         server.executor = null // creates a default executor
         server.start()
+        println("Server started on port $port")
     }
 
     class MyHandler : HttpHandler {

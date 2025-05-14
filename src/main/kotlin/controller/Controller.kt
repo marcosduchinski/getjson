@@ -6,6 +6,10 @@ import annotations.Path
 
 @Mapping("api")
 class Controller {
+
+    @Mapping("welcome")
+    fun welcome(): String = "Welcome to GETJSON!"
+
     @Mapping("ints")
     fun demo(): List<Int> = listOf(1, 2, 3)
 
