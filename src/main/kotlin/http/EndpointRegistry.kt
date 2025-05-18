@@ -10,7 +10,7 @@ import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.isAccessible
 
-object ClassRegistry {
+object EndpointRegistry {
 
     private val registry = mutableMapOf<String, Pair<Any, KFunction<*>>>()
 

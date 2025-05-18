@@ -5,8 +5,8 @@ import annotations.Mapping
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
-import pt.iscte.mei.pa.http.ClassRegistry
 import pt.iscte.mei.pa.http.Dispatcher
+import pt.iscte.mei.pa.http.EndpointRegistry
 import java.net.InetSocketAddress
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
@@ -17,7 +17,7 @@ class GetJson(vararg clazzs: KClass<*>) {
 
     init {
         for (clazz in clazzs) {
-            ClassRegistry.register(clazz)
+            EndpointRegistry.register(clazz)
             extractContext(clazz)
         }
     }
@@ -41,15 +41,14 @@ class GetJson(vararg clazzs: KClass<*>) {
     }
 
     class MyHandler : HttpHandler {
-        override fun handle(t: HttpExchange) {
+        private val dispatcher = Dispatcher(EndpointRegistry)
 
-            //here ksonlib is used to convert the response to json
-            val response = KsonLib(Dispatcher(ClassRegistry).execute(t.requestURI)).asJson()
-
-            t.sendResponseHeaders(200, response.length.toLong())
-            val os = t.responseBody
-            os.write(response.toByteArray())
-            os.close()
+        override fun handle(exchange: HttpExchange) {
+            val response = KsonLib(dispatcher.execute(exchange.requestURI)).asJson();
+            exchange.sendResponseHeaders(200, response.length.toLong())
+            exchange.responseBody.use { os ->
+                os.write(response.toByteArray())
+            }
         }
     }
 }
