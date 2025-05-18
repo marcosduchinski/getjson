@@ -1,8 +1,7 @@
-package pt.iscte.mei.pa.strategy.strategy
+package pt.iscte.mei.pa.strategy
 
 import pt.iscte.mei.pa.EndpointRegistry
 import pt.iscte.mei.pa.command.ControllerCommand
-import pt.iscte.mei.pa.strategy.DispatchStrategy
 import java.net.URI
 
 class PathVariableStrategy : DispatchStrategy {
