@@ -5,8 +5,8 @@ import annotations.Mapping
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
-import pt.iscte.mei.pa.http.Dispatcher
-import pt.iscte.mei.pa.http.EndpointRegistry
+import pt.iscte.mei.pa.Dispatcher
+import pt.iscte.mei.pa.EndpointRegistry
 import java.net.InetSocketAddress
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation

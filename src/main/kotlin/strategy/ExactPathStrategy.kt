@@ -1,7 +1,7 @@
 package pt.iscte.mei.pa.strategy
 
 import pt.iscte.mei.pa.command.ControllerCommand
-import pt.iscte.mei.pa.http.EndpointRegistry
+import pt.iscte.mei.pa.EndpointRegistry
 import java.net.URI
 
 class ExactPathStrategy : DispatchStrategy {

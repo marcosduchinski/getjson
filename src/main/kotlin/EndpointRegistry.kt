@@ -1,4 +1,4 @@
-package pt.iscte.mei.pa.http
+package pt.iscte.mei.pa
 
 import annotations.Mapping
 import annotations.Param
