@@ -2,6 +2,7 @@ package pt.iscte.mei.pa
 
 import annotations.Mapping
 import annotations.Param
+import annotations.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -15,11 +16,14 @@ object EndpointRegistry {
     private val registry = mutableMapOf<String, Pair<Any, KFunction<*>>>()
 
     fun register(clazz: KClass<*>) {
-        val basePath = clazz.findAnnotation<Mapping>()?.name
+        val context = clazz.findAnnotation<Mapping>()?.name
         val controller = clazz.createInstance()
         clazz.declaredFunctions.forEach { func ->
-            val subPath = func.findAnnotation<Mapping>()?.name
-            var fullPath = "/$basePath/$subPath"
+            var subPath = func.findAnnotation<Mapping>()?.name
+            if (subPath!!.contains("{")) {
+                subPath = subPath.split("/").dropLast(1).joinToString("/")
+            }
+            var fullPath = "/$context/$subPath"
             val queryParams = func.parameters
                 .filter { it.kind == KParameter.Kind.VALUE }.mapNotNull { param ->
                     val ann = param.findAnnotation<Param>()
@@ -27,9 +31,19 @@ object EndpointRegistry {
                         param.name
                     }
                 }
-            val params = queryParams.joinToString(separator = "&") { it.toString() + "={${it}}" }
+            val pathParams = func.parameters
+                .filter { it.kind == KParameter.Kind.VALUE }.mapNotNull { param ->
+                    val ann = param.findAnnotation<Path>()
+                    ann?.let {
+                        param.name
+                    }
+                }
+            val params = queryParams.joinToString(separator = "&") { it + "={${it}}" }
+            val pathParamsString = pathParams.joinToString(separator = "/") {"{${it}}" }
             if (params.isNotEmpty()) {
                 fullPath += "?$params"
+            } else if (pathParamsString.isNotEmpty()) {
+                fullPath += "/$pathParamsString"
             }
             println(fullPath)
             func.isAccessible = true

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import pt.iscte.mei.pa.GetJson
 import pt.iscte.mei.pa.controller.Controller
+import pt.iscte.mei.pa.controller.FiboController
 import java.net.HttpURLConnection
 import java.net.URI
 
@@ -19,7 +20,7 @@ class GetJsonTest {
 
     @BeforeAll
     fun init() {
-        val app = GetJson(Controller::class)
+        val app = GetJson(Controller::class, FiboController::class)
         app.start(port)
     }
 
@@ -91,6 +92,19 @@ class GetJsonTest {
         val responseBody = connection.inputStream.bufferedReader().readText()
         assertEquals(200, responseCode)
         assertEquals(KsonLib(mapOf("PA" to "PAPAPA")).asJson(), responseBody)
+    }
+
+    @Test
+    fun should_return_fibonacci_sequence() {
+        val connection = URI("$url:$port/fibo/sequence/5")
+            .toURL()
+            .openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(200, responseCode)
+        assertEquals(KsonLib("0, 1, 1, 2, 3, 5").asJson(), responseBody)
     }
 
 }
