@@ -2,7 +2,6 @@ package pt.iscte.mei.pa
 
 import annotations.Mapping
 import annotations.Param
-import annotations.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -20,10 +19,10 @@ object EndpointRegistry {
         val controller = clazz.createInstance()
         clazz.declaredFunctions.forEach { func ->
             var subPath = func.findAnnotation<Mapping>()?.name
-            if (subPath!!.contains("{")) {
-                subPath = subPath.split("/").dropLast(1).joinToString("/")
+            if (subPath == null) {
+                return@forEach
             }
-            var fullPath = "/$context/$subPath"
+            func.isAccessible = true
             val queryParams = func.parameters
                 .filter { it.kind == KParameter.Kind.VALUE }.mapNotNull { param ->
                     val ann = param.findAnnotation<Param>()
@@ -31,23 +30,16 @@ object EndpointRegistry {
                         param.name
                     }
                 }
-            val pathParams = func.parameters
-                .filter { it.kind == KParameter.Kind.VALUE }.mapNotNull { param ->
-                    val ann = param.findAnnotation<Path>()
-                    ann?.let {
-                        param.name
-                    }
-                }
-            val params = queryParams.joinToString(separator = "&") { it + "={${it}}" }
-            val pathParamsString = pathParams.joinToString(separator = "/") {"{${it}}" }
-            if (params.isNotEmpty()) {
-                fullPath += "?$params"
-            } else if (pathParamsString.isNotEmpty()) {
-                fullPath += "/$pathParamsString"
+            if (queryParams.isNotEmpty()) {
+                val params = queryParams.joinToString(separator = "&") { it + "={${it}}" }
+                val fullPath = "/$context/$subPath?$params"
+                println(fullPath)
+                registry[fullPath] = controller to func
+            } else {
+                val fullPath = "/$context/$subPath"
+                println(fullPath)
+                registry[fullPath] = controller to func
             }
-            println(fullPath)
-            func.isAccessible = true
-            registry[fullPath] = controller to func
         }
     }
 
