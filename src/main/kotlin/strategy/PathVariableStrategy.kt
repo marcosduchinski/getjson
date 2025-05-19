@@ -8,7 +8,7 @@ class PathVariableStrategy : DispatchStrategy {
 
     override fun canHandle(uri: URI, registry: EndpointRegistry): Boolean {
         val parts = uri.path.split("/")
-        if (parts.size < 2) return false
+        if (uri.query != null || parts.size < 4) return false
         val genericPath = parts.dropLast(1).joinToString("/") + "/{pathvar}"
         return registry.getByPath(genericPath) != null
     }
