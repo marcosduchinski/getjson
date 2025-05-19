@@ -3,6 +3,8 @@ package pt.iscte.mei.pa.strategy
 import pt.iscte.mei.pa.EndpointRegistry
 import pt.iscte.mei.pa.command.ControllerCommand
 import java.net.URI
+import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 
 class QueryParameterStrategy : DispatchStrategy {
 
@@ -12,11 +14,18 @@ class QueryParameterStrategy : DispatchStrategy {
     override fun handle(uri: URI, registry: EndpointRegistry): Any {
         val queryParams = uri.query.split("&").associate {
             val (key, value) = it.split("=")
-            key to (value.toIntOrNull() ?: value)
+            key to value
         }
         val path = buildPathWithQuery(uri)
         val (controller, function) = registry.getByPath(path)!!
-        return ControllerCommand(controller, function, queryParams.values.toList()).execute()
+
+        val typedArgs = function.parameters
+            .filter { it.kind == KParameter.Kind.VALUE }
+            .map {
+                val value = queryParams[it.name]!!
+                convertToType(value, it.type.classifier as KClass<*>)
+            }
+        return ControllerCommand(controller, function, typedArgs).execute()
     }
 
     private fun buildPathWithQuery(uri: URI): String {
