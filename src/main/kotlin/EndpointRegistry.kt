@@ -46,4 +46,12 @@ object EndpointRegistry {
     fun getByPath(path: String): Pair<Any, KFunction<*>>? {
         return registry[path]
     }
+    fun getFirstByRegexPath(genericPathRegex: String): Pair<Any, KFunction<*>>? {
+        registry.keys.forEach { path ->
+            if (path.contains(Regex(genericPathRegex))) {
+                return registry[path]
+            }
+        }
+        return null
+    }
 }

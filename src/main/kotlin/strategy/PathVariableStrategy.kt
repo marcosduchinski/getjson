@@ -11,15 +11,15 @@ class PathVariableStrategy : DispatchStrategy {
     override fun canHandle(uri: URI, registry: EndpointRegistry): Boolean {
         val parts = uri.path.split("/")
         if (uri.query != null || parts.size < 4) return false
-        val genericPath = parts.dropLast(1).joinToString("/") + "/{pathvar}"
-        return registry.getByPath(genericPath) != null
+        val regexPath = parts.dropLast(1).joinToString("/") + "/\\{.+\\}"
+        return registry.getFirstByRegexPath(regexPath) != null
     }
 
     override fun handle(uri: URI, registry: EndpointRegistry): Any {
         val parts = uri.path.split("/")
         val value = parts.last()
-        val path = parts.dropLast(1).joinToString("/") + "/{pathvar}"
-        val (controller, function) = registry.getByPath(path)!!
+        val regexPath = parts.dropLast(1).joinToString("/") + "/\\{.+\\}"
+        val (controller, function) = registry.getFirstByRegexPath(regexPath)!!
         val typedArg = function.parameters
             .filter { it.kind == KParameter.Kind.VALUE }
             .map {
