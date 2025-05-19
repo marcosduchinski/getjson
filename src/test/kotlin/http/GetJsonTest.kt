@@ -104,7 +104,7 @@ class GetJsonTest {
         val responseCode = connection.responseCode
         val responseBody = connection.inputStream.bufferedReader().readText()
         assertEquals(200, responseCode)
-        assertEquals(KsonLib("0, 1, 1, 2, 3, 5").asJson(), responseBody)
+        assertEquals(KsonLib(listOf(0,1,1,2,3,5)).asJson(), responseBody)
     }
 
 }

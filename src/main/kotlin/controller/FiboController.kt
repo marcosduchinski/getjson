@@ -1,26 +1,25 @@
 package pt.iscte.mei.pa.controller
 
 import annotations.Mapping
-import annotations.Param
 import annotations.Path
 
 @Mapping("fibo")
 class FiboController {
 
-    @Mapping("sequence/{n}")
+    @Mapping("sequence/{pathvar}")
     fun path(
-        @Path n: Int
-    ): String {
-        var a = 0
-        var b = 1
-        var c: Int
-        var result = "0"
-        for (i in 1 until n) {
-            c = a + b
-            a = b
-            b = c
-            result += ", $c"
+        @Path pathvar: Int
+    ): List<Int> {
+        if (pathvar == 0) {
+            return listOf(0)
         }
-        return result
+        if (pathvar == 1) {
+            return listOf(0, 1)
+        }
+        val sequence = mutableListOf<Int>(0, 1)
+        for (i in 2..pathvar) {
+            sequence.add(sequence[i - 1] + sequence[i - 2])
+        }
+        return sequence
     }
 }
