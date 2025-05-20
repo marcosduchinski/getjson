@@ -106,6 +106,19 @@ class GetJsonTest {
     }
 
     @Test
+    fun should_return_map_as_json_with_url_parameters_in_any_order() {
+        val connection = URI("$url:$port/api/args?text=PA&n=3")
+            .toURL()
+            .openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        assertEquals(200, responseCode)
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(KsonLib(mapOf("PA" to "PAPAPA")).asJson(), responseBody)
+    }
+
+    @Test
     fun should_return_fibonacci_sequence() {
         val connection = URI("$url:$port/fibo/sequence/5")
             .toURL()
