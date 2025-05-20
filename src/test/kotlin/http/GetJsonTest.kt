@@ -12,6 +12,14 @@ import pt.iscte.mei.pa.controller.FiboController
 import java.net.HttpURLConnection
 import java.net.URI
 
+/**
+ * This is a test class for the GetJson application.
+ * It contains several test cases to verify the functionality of the application.
+ *
+ * @see GetJson
+ * @see Controller
+ * @see FiboController
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GetJsonTest {
 

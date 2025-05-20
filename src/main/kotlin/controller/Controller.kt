@@ -4,6 +4,11 @@ import annotations.Mapping
 import annotations.Param
 import annotations.Path
 
+/**
+ * This is a sample controller class that demonstrates how to use the GETJSON framework.
+ * It contains several methods that are mapped to different endpoints.
+ *
+ */
 @Mapping("api")
 class Controller {
 

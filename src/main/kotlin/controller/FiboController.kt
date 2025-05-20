@@ -3,6 +3,11 @@ package pt.iscte.mei.pa.controller
 import annotations.Mapping
 import annotations.Path
 
+/**
+ * This is a sample controller class that demonstrates how to use the GETJSON framework.
+ * It contains several methods that are mapped to different endpoints.
+ *
+ */
 @Mapping("fibo")
 class FiboController {
 

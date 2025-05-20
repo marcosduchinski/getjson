@@ -11,9 +11,15 @@ import java.net.InetSocketAddress
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
+/**
+ * Main class to start the server and register endpoints.
+ *
+ * @param clazzs Classes to be registered as endpoints.
+ */
 class GetJson(vararg clazzs: KClass<*>) {
 
     val contexts = mutableSetOf<String>()
+
 
     init {
         for (clazz in clazzs) {
@@ -31,6 +37,13 @@ class GetJson(vararg clazzs: KClass<*>) {
         }
     }
 
+    /**
+     * Starts the server on the specified port.
+     * This method creates an HTTP server and registers the contexts for each class.
+     * It also sets up a handler to process incoming requests.
+     *
+     * @param port The port to start the server on. Default is 8080.
+     */
     fun start(port: Int = 8080) {
         //https://gist.github.com/trevorwhitney/23f7d8ee9e2f92d629e149a7fde01f21
         val server = HttpServer.create(InetSocketAddress(port), 0)
@@ -40,9 +53,20 @@ class GetJson(vararg clazzs: KClass<*>) {
         println("Server started on port $port")
     }
 
+    /**
+     * Handler for processing incoming HTTP requests.
+     * It uses the Dispatcher to handle the request and returns the response as JSON.
+     */
     class MyHandler : HttpHandler {
         private val dispatcher = Dispatcher(EndpointRegistry)
 
+        /**
+         * Handles the incoming HTTP exchange.
+         * It retrieves the request URI, processes it using the Dispatcher, and sends the response.
+         * The JSON response is generated using KsonLib, a library for JSON serialization.
+         *
+         * @param exchange The HTTP exchange containing the request and response.
+         */
         override fun handle(exchange: HttpExchange) {
             val response = KsonLib(dispatcher.execute(exchange.requestURI)).asJson();
             if ("404" in response) {
