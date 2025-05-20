@@ -41,6 +41,19 @@ class GetJsonTest {
     }
 
     @Test
+    fun should_return_empty_list() {
+        val connection = URI("$url:$port/api/emptyList")
+            .toURL()
+            .openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        assertEquals(200, responseCode)
+        val responseBody = connection.inputStream.bufferedReader().readText()
+        assertEquals(KsonLib(emptyList<String>()).asJson(), responseBody)
+    }
+
+    @Test
     fun should_return_int_list_as_json() {
         val connection = URI("$url:$port/api/ints")
             .toURL()

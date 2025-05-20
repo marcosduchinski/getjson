@@ -13,6 +13,12 @@ class Controller {
     @Mapping("ints")
     fun demo(): List<Int> = listOf(1, 2, 3)
 
+    @Mapping("emptyList")
+    fun empList(): List<String> = emptyList()
+
+    @Mapping("emptyMap")
+    fun empMap(): Map<String,String> = emptyMap<String,String>()
+
     @Mapping("pair")
     fun obj(): Pair<String, String> = Pair("um", "dois")
 
