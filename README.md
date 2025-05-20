@@ -11,7 +11,7 @@ The framework should be launched by enumerating a list of REST controllers that 
 
 1. Download the ksonlib jar file from the releases page:
 
-   https://github.com/marcosduchinski/ksonlib/releases/tag/v0.0.6
+   https://github.com/marcosduchinski/ksonlib/releases/
 
 
 2. Install the ksonlib jar file in your local maven repository:
