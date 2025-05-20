@@ -30,6 +30,17 @@ class GetJsonTest {
     }
 
     @Test
+    fun should_return_404_when_endpoint_does_not_exists() {
+        val connection = URI("$url:$port/api/something")
+            .toURL()
+            .openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connect()
+        val responseCode = connection.responseCode
+        assertEquals(404, responseCode)
+    }
+
+    @Test
     fun should_return_int_list_as_json() {
         val connection = URI("$url:$port/api/ints")
             .toURL()

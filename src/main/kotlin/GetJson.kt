@@ -45,6 +45,11 @@ class GetJson(vararg clazzs: KClass<*>) {
 
         override fun handle(exchange: HttpExchange) {
             val response = KsonLib(dispatcher.execute(exchange.requestURI)).asJson();
+            if ("404" in response) {
+                exchange.sendResponseHeaders(404, -1)
+                return
+            }
+            exchange.responseHeaders.set("Content-Type", "application/json");
             exchange.sendResponseHeaders(200, response.length.toLong())
             exchange.responseBody.use { os ->
                 os.write(response.toByteArray())
