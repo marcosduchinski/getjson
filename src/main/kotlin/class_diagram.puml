@@ -1,0 +1,97 @@
+@startuml
+left to right direction
+
+' ==== PACKAGES ====
+package "controller" #DDDDDD {
+  class Controller {
+    +welcome(): String
+    +demo(): List<Int>
+    +empList(): List<String>
+    +empMap(): Map<String,String>
+    +obj(): Pair<String,String>
+    +path(pathvar: String): String
+    +args(n: Int, text: String): Map<String,String>
+  }
+
+  class FiboController {
+    +path(n: Int): List<Int>
+  }
+}
+
+package "command" #DDDDDD {
+  interface Command {
+    +execute(): Any
+  }
+
+  class ControllerCommand {
+    -controller: Any
+    -function: KFunction<*>
+    -args: List<Any>
+    +execute(): Any
+  }
+
+  Command <|-- ControllerCommand
+}
+
+package "strategy" #DDDDDD {
+  interface DispatchStrategy {
+    +canHandle(uri: URI, registry: EndpointRegistry): Boolean
+    +handle(uri: URI, registry: EndpointRegistry): Any
+  }
+
+  class ExactPathStrategy
+  class PathVariableStrategy
+  class QueryParameterStrategy
+
+  DispatchStrategy <|-- ExactPathStrategy
+  DispatchStrategy <|-- PathVariableStrategy
+  DispatchStrategy <|-- QueryParameterStrategy
+}
+
+  class Dispatcher {
+    -strategies: List<DispatchStrategy>
+    -registry: EndpointRegistry
+    +execute(uri: URI): Any
+  }
+
+  object EndpointRegistry {
+    +register(clazz: KClass<*>)
+    +getByPath(path: String): Pair<Any, KFunction<*>>?
+    +getFirstByRegexPath(genericPathRegex: String): Pair<Any, KFunction<*>>?
+  }
+
+  class GetJson {
+    -contexts: MutableSet<String>
+    +start(port: Int = 8080)
+  }
+
+  class MyHandler {
+    -dispatcher: Dispatcher
+    +handle(exchange: HttpExchange)
+  }
+
+  class KsonLib {
+    -obj: Any?
+    +asJson(): String
+    +asJsonValue(): JsonValue
+    +asJsonObject(): JsonObject
+    +asJsonArray(): JsonArray
+  }
+
+
+
+
+' ==== RELATIONSHIPS ====
+Dispatcher --> DispatchStrategy
+Dispatcher --> EndpointRegistry
+DispatchStrategy --> EndpointRegistry
+ExactPathStrategy --> ControllerCommand
+PathVariableStrategy --> ControllerCommand
+QueryParameterStrategy --> ControllerCommand
+GetJson --> EndpointRegistry
+GetJson --> MyHandler
+MyHandler --> Dispatcher
+GetJson --> KsonLib : use
+GetJson.MyHandler --> Dispatcher
+
+@enduml
