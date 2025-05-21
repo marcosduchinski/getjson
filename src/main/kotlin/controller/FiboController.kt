@@ -11,8 +11,14 @@ import annotations.Path
 @Mapping("fibo")
 class FiboController {
 
+    /**
+     * Returns the Fibonacci sequence up to the nth number.
+     *
+     * @param n The number of terms in the Fibonacci sequence to return.
+     * @return A list of integers representing the Fibonacci sequence.
+     */
     @Mapping("sequence/{n}")
-    fun path(
+    fun sequence(
         @Path n: Int
     ): List<Int> {
         if (n == 0) {

@@ -14,7 +14,7 @@ package "controller" #DDDDDD {
   }
 
   class FiboController {
-    +path(n: Int): List<Int>
+    +sequence(n: Int): List<Int>
   }
 }
 
