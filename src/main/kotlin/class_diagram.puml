@@ -1,4 +1,11 @@
 @startuml
+
+
+' ============================================================
+'      https://plantuml.com/class-diagram
+' ============================================================
+
+
 left to right direction
 
 ' ==== PACKAGES ====
@@ -54,18 +61,18 @@ package "strategy" #DDDDDD {
     +execute(uri: URI): Any
   }
 
-  object EndpointRegistry {
+  object EndpointRegistry <<Singleton>> {
     +register(clazz: KClass<*>)
     +getByPath(path: String): Pair<Any, KFunction<*>>?
     +getFirstByRegexPath(genericPathRegex: String): Pair<Any, KFunction<*>>?
   }
 
-  class GetJson {
+  class GetJson <<Main Class>> {
     -contexts: MutableSet<String>
     +start(port: Int = 8080)
   }
 
-  class MyHandler {
+  class MyHandler <<HttpHandler>> {
     -dispatcher: Dispatcher
     +handle(exchange: HttpExchange)
   }
@@ -82,16 +89,17 @@ package "strategy" #DDDDDD {
 
 
 ' ==== RELATIONSHIPS ====
-Dispatcher --> DispatchStrategy
-Dispatcher --> EndpointRegistry
-DispatchStrategy --> EndpointRegistry
+GetJson --> MyHandler : use
+GetJson --> KsonLib : use
+GetJson --> EndpointRegistry : use
+MyHandler --* Dispatcher : has a
+GetJson ..> Controller
+GetJson ..> FiboController
+Dispatcher --o "*" DispatchStrategy
+Dispatcher --o EndpointRegistry
 ExactPathStrategy --> ControllerCommand
 PathVariableStrategy --> ControllerCommand
 QueryParameterStrategy --> ControllerCommand
-GetJson --> EndpointRegistry
-GetJson --> MyHandler
-MyHandler --> Dispatcher
-GetJson --> KsonLib : use
-GetJson.MyHandler --> Dispatcher
+
 
 @enduml
